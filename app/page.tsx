@@ -1,103 +1,179 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <h1 className="text-6xl font-display font-black text-foreground tracking-tight">
+            Rugbot
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            A persuasive role-playing game with AI chatbot
+          </p>
+          <Badge variant="secondary" className="text-sm">
+            Powered by OpenRouter & Solana
+          </Badge>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary font-display font-bold text-2xl">
+                Twitter Auth
+              </CardTitle>
+              <CardDescription>
+                Sign in with your Twitter account via Supabase OAuth
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" variant="outline">
+                Connect Twitter
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary font-display font-bold text-2xl">
+                AI Chat
+              </CardTitle>
+              <CardDescription>
+                Engage with an LLM role-playing chatbot
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" variant="outline">
+                Start Chat
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary font-display font-bold text-2xl">
+                Earn Tokens
+              </CardTitle>
+              <CardDescription>
+                Convince the bot to earn Solana tokens
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" variant="outline">
+                View Leaderboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Chat Interface Preview */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-display font-bold text-3xl">
+              Chat Interface Preview
+            </CardTitle>
+            <CardDescription>
+              This is how the chat interface will look
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span className="text-sm text-muted-foreground">AI Bot</span>
+              </div>
+              <div className="bg-muted p-3 rounded-lg">
+                <p className="text-sm">
+                  Hello! I'm the AI bot. Try to persuade me with your arguments...
+                </p>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 justify-end">
+                <span className="text-sm text-muted-foreground">You</span>
+                <div className="w-2 h-2 bg-secondary rounded-full"></div>
+              </div>
+              <div className="bg-secondary p-3 rounded-lg">
+                <p className="text-sm text-secondary-foreground">
+                  Let me try to convince you...
+                </p>
+              </div>
+            </div>
+
+            <div className="flex space-x-2">
+              <Input 
+                placeholder="Type your message..." 
+                className="flex-1"
+              />
+              <Button>Send</Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Typography Showcase */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-display font-black text-4xl">
+              Typography System
+            </CardTitle>
+            <CardDescription>
+              PP Watch Display Font + Space Grotesk Body Font (Default)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <h1 className="font-display font-black text-5xl text-foreground">Display Black</h1>
+              <h2 className="font-display font-bold text-4xl text-foreground">Display Bold</h2>
+              <h3 className="font-display font-medium text-3xl text-foreground">Display Medium</h3>
+              <h4 className="font-display font-extralight text-2xl text-foreground">Display Extralight</h4>
+            </div>
+            
+            <div className="space-y-2 pt-4 border-t border-border">
+              <p className="text-lg text-foreground">Body text using Space Grotesk (default)</p>
+              <p className="text-base text-muted-foreground">
+                This is the body text that will be used throughout the application for readability and consistency. Space Grotesk is now the default font for all text.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Color Palette Showcase */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-display font-bold text-3xl">Design System Colors</CardTitle>
+            <CardDescription>
+              Our custom warm brown color palette
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <div className="h-12 bg-primary rounded-lg"></div>
+                <p className="text-xs text-center">Primary</p>
+              </div>
+              <div className="space-y-2">
+                <div className="h-12 bg-secondary rounded-lg"></div>
+                <p className="text-xs text-center">Secondary</p>
+              </div>
+              <div className="space-y-2">
+                <div className="h-12 bg-accent rounded-lg"></div>
+                <p className="text-xs text-center">Accent</p>
+              </div>
+              <div className="space-y-2">
+                <div className="h-12 bg-muted rounded-lg"></div>
+                <p className="text-xs text-center">Muted</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
