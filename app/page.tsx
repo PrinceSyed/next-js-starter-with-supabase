@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SupabaseTest } from "@/components/SupabaseTest";
 import { TwitterLoginButton } from "@/components/auth/TwitterLoginButton";
+import { DiscordLoginButton } from "@/components/auth/DiscordLoginButton";
+import { DiscordOAuthTest } from "@/components/auth/DiscordOAuthTest";
+import { OAuthButton } from "@/components/auth/OAuthButton";
 import { UserProfile } from "@/components/auth/UserProfile";
 import { AuthStatus } from "@/components/auth/AuthStatus";
 import { AuthDebug } from "@/components/auth/AuthDebug";
@@ -77,6 +80,20 @@ export default function Home() {
           <Card>
             <CardHeader>
               <CardTitle className="text-primary font-display font-bold text-2xl">
+                Discord Auth
+              </CardTitle>
+              <CardDescription>
+                Sign in with your Discord account via Supabase OAuth
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DiscordLoginButton />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary font-display font-bold text-2xl">
                 AI Chat
               </CardTitle>
               <CardDescription>
@@ -89,23 +106,27 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-primary font-display font-bold text-2xl">
-                Earn Tokens
-              </CardTitle>
-              <CardDescription>
-                Convince the bot to earn Solana tokens
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" variant="outline">
-                View Leaderboard
-              </Button>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* All OAuth Providers */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary font-display font-bold text-2xl">
+              All OAuth Providers
+            </CardTitle>
+            <CardDescription>
+              Choose your preferred authentication method
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <OAuthButton provider="google" />
+            <OAuthButton provider="discord" />
+            <OAuthButton provider="twitter" />
+          </CardContent>
+        </Card>
+
+        {/* Discord OAuth Test */}
+        <DiscordOAuthTest />
 
         {/* Chat Interface Preview */}
         <Card>
