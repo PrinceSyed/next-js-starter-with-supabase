@@ -8,6 +8,8 @@ import { TwitterLoginButton } from "@/components/auth/TwitterLoginButton";
 import { UserProfile } from "@/components/auth/UserProfile";
 import { AuthStatus } from "@/components/auth/AuthStatus";
 import { AuthDebug } from "@/components/auth/AuthDebug";
+import { OAuthErrorDisplay } from "@/components/auth/OAuthErrorDisplay";
+import { GoogleSignOutButton } from "@/components/auth/GoogleSignOutButton";
 
 export default function Home() {
   return (
@@ -29,6 +31,9 @@ export default function Home() {
           </Badge>
         </div>
 
+        {/* OAuth Error Display */}
+        <OAuthErrorDisplay />
+
         {/* Supabase Test */}
         <SupabaseTest />
 
@@ -37,6 +42,21 @@ export default function Home() {
 
         {/* User Profile - Shows when authenticated */}
         <UserProfile />
+
+        {/* Google Sign Out Button */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary font-display font-bold text-2xl">
+              Google Authentication
+            </CardTitle>
+            <CardDescription>
+              Manage your Google account connection
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GoogleSignOutButton />
+          </CardContent>
+        </Card>
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -63,9 +63,13 @@ export function OAuthButton({ provider, className = '' }: OAuthButtonProps) {
   const handleSignIn = async () => {
     setIsSigningIn(true)
     try {
+      console.log(`Starting ${provider} OAuth sign in...`)
       await signInWithOAuth(provider)
+      console.log(`${provider} OAuth sign in initiated successfully`)
     } catch (error) {
-      console.error('Sign in failed:', error)
+      console.error(`${provider} sign in failed:`, error)
+      // Show user-friendly error message
+      alert(`${provider} sign in failed. Please check the console for details or try again.`)
     } finally {
       setIsSigningIn(false)
     }

@@ -24,7 +24,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      console.log('Getting initial session...')
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Error getting session:', error)
+      }
+      
+      console.log('Initial session:', session?.user?.email || 'No session')
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -35,7 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email)
+        console.log('Auth state changed:', event, session?.user?.email || 'No user')
+        console.log('Full session data:', session)
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
@@ -49,13 +57,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log(`Starting ${provider} OAuth...`)
       console.log('Current origin:', window.location.origin)
+      console.log('Redirect URL:', `${window.location.origin}/auth/callback`)
+      
+      // Validate environment variables
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
+      }
+      
+      if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+        throw new Error('Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY environment variable')
+      }
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: {
-            // You can add additional OAuth parameters here if needed
+            prompt: 'select_account',
+            access_type: 'offline'
           }
         }
       })
@@ -66,6 +85,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       console.log(`${provider} OAuth initiated successfully:`, data)
+      
+      // If we have a URL, redirect to it
+      if (data.url) {
+        console.log(`Redirecting to OAuth URL: ${data.url}`)
+        window.location.href = data.url
+      } else {
+        console.warn('No OAuth URL received from Supabase')
+      }
       
     } catch (error) {
       console.error(`${provider} sign in failed:`, error)

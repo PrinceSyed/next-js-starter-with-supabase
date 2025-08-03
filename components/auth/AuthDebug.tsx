@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function AuthDebug() {
-  const { user, session, loading, signInWithTwitter, signInWithGoogle } = useAuth()
+  const { user, session, loading, signInWithTwitter, signInWithGoogle, signOut } = useAuth()
   const [testResults, setTestResults] = useState<any>(null)
   const [isTesting, setIsTesting] = useState(false)
 
@@ -116,10 +116,140 @@ export function AuthDebug() {
     }
   }
 
+  const debugGoogleOAuth = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/debug-google-oauth')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
   const testServerClient = async () => {
     setIsTesting(true)
     try {
       const response = await fetch('/api/test-server-client')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testEnvRuntime = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-env-runtime')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testPKCEFlow = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-pkce-flow')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const debugPKCEIssue = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/debug-pkce-issue')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testSimpleOAuthFlow = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-simple-oauth-flow')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testCompleteOAuthFlow = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-oauth-complete-flow')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testOAuthConfig = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-oauth-config')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testOAuthFlowFixed = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-oauth-flow-fixed')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const diagnoseAuth = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/diagnose-auth')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testCompleteOAuthFlowNew = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-complete-oauth-flow')
       const data = await response.json()
       setTestResults(data)
     } catch (error) {
@@ -193,14 +323,22 @@ export function AuthDebug() {
                >
                  Test Twitter Sign In
                </Button>
-               <Button 
-                 onClick={signInWithGoogle} 
-                 disabled={loading}
-                 className="w-full"
-                 variant="outline"
-               >
-                 Test Google Sign In
-               </Button>
+                               <Button 
+                  onClick={signInWithGoogle} 
+                  disabled={loading}
+                  className="w-full"
+                  variant="outline"
+                >
+                  Test Google Sign In
+                </Button>
+                <Button 
+                  onClick={signOut} 
+                  disabled={loading || !user}
+                  className="w-full"
+                  variant="destructive"
+                >
+                  Sign Out
+                </Button>
              </div>
           </TabsContent>
 
@@ -275,12 +413,82 @@ export function AuthDebug() {
                      🔍 Test Google OAuth Detailed
                    </Button>
                    <Button 
-                     onClick={testServerClient} 
+                     onClick={debugGoogleOAuth} 
                      disabled={isTesting}
-                     variant="outline"
+                     variant="default"
                    >
-                     🔍 Test Server Client Config
+                     🔍 Debug Google OAuth (Comprehensive)
                    </Button>
+                                       <Button 
+                      onClick={testServerClient} 
+                      disabled={isTesting}
+                      variant="outline"
+                    >
+                      🔍 Test Server Client Config
+                    </Button>
+                    <Button 
+                      onClick={testEnvRuntime} 
+                      disabled={isTesting}
+                      variant="outline"
+                    >
+                      🔍 Test Environment Runtime
+                    </Button>
+                    <Button 
+                      onClick={testPKCEFlow} 
+                      disabled={isTesting}
+                      variant="default"
+                    >
+                      🔐 Test PKCE Flow
+                    </Button>
+                    <Button 
+                      onClick={debugPKCEIssue} 
+                      disabled={isTesting}
+                      variant="destructive"
+                    >
+                      🔍 Debug PKCE Issue
+                    </Button>
+                    <Button 
+                      onClick={testSimpleOAuthFlow} 
+                      disabled={isTesting}
+                      variant="outline"
+                    >
+                      🔍 Test Simple OAuth Flow
+                    </Button>
+                    <Button 
+                      onClick={testCompleteOAuthFlow} 
+                      disabled={isTesting}
+                      variant="default"
+                    >
+                      🔍 Test Complete OAuth Flow
+                    </Button>
+                    <Button 
+                      onClick={testOAuthConfig} 
+                      disabled={isTesting}
+                      variant="destructive"
+                    >
+                      🔍 Test OAuth Config (Port Issue)
+                    </Button>
+                    <Button 
+                      onClick={testOAuthFlowFixed} 
+                      disabled={isTesting}
+                      variant="default"
+                    >
+                      ✅ Test Fixed OAuth Flow
+                    </Button>
+                    <Button 
+                      onClick={diagnoseAuth} 
+                      disabled={isTesting}
+                      variant="destructive"
+                    >
+                      🔍 Diagnose Auth Issues
+                    </Button>
+                    <Button 
+                      onClick={testCompleteOAuthFlowNew} 
+                      disabled={isTesting}
+                      variant="default"
+                    >
+                      🔄 Test Complete OAuth Flow
+                    </Button>
                  <Button 
                    onClick={debugOAuth} 
                    disabled={isTesting}

@@ -23,7 +23,8 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 })
 
@@ -31,7 +32,8 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
 export const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
+    persistSession: false,
+    flowType: 'pkce'
   }
 })
 
