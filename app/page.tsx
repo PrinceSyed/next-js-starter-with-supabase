@@ -94,6 +94,22 @@ export default function Home() {
           <Card>
             <CardHeader>
               <CardTitle className="text-primary font-display font-bold text-2xl">
+                Posts
+              </CardTitle>
+              <CardDescription>
+                Create and view community posts
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" variant="outline" asChild>
+                <a href="/posts">View Posts</a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-primary font-display font-bold text-2xl">
                 AI Chat
               </CardTitle>
               <CardDescription>
