@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { spaceGrotesk, ppWatch } from "@/lib/fonts";
+import { Navigation } from "@/components/ui/navigation";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +18,10 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${ppWatch.variable} antialiased`}
       >
-        {children}
+        <Navigation />
+        <main className="pt-16">
+          {children}
+        </main>
       </body>
     </html>
   );
