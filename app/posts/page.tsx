@@ -77,22 +77,7 @@ export default function PostsPage() {
       setIsSubmitting(true)
       setError(null)
 
-      // Debug: Log user data
-      console.log('Creating post with user data:', {
-        userId: user.id,
-        userEmail: user.email,
-        userMetadata: user.user_metadata,
-        postData: {
-          title: newPost.title.trim(),
-          content: newPost.content.trim(),
-          user_id: user.id,
-          user_metadata: {
-            full_name: user.user_metadata?.full_name || user.email,
-            avatar_url: user.user_metadata?.avatar_url,
-            user_name: user.user_metadata?.user_name || user.user_metadata?.name
-          }
-        }
-      })
+
 
       const { data, error } = await supabase
         .from('posts')
@@ -112,11 +97,9 @@ export default function PostsPage() {
 
       if (error) {
         console.error('Error creating post:', error)
-        setError(`Failed to create post: ${error.message}`)
+        setError('Failed to create post')
         return
       }
-
-      console.log('Post created successfully:', data)
 
       // Reset form and refresh posts
       setNewPost({ title: '', content: '' })
