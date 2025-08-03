@@ -8,7 +8,7 @@ export async function GET() {
     const redirectTo = 'http://localhost:3000/auth/callback'
     
     // Construct the OAuth URL manually to test
-    const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=twitter&redirect_to=${encodeURIComponent(redirectTo)}`
+    const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`
     
     // Test if the URL is accessible - OAuth endpoints expect POST, not GET
     const response = await fetch(oauthUrl, { 
@@ -48,9 +48,9 @@ export async function GET() {
         missingServiceKey: !process.env.SUPABASE_SECRET_KEY ? 'Add SUPABASE_SECRET_KEY to .env.local' : null,
         expected405: response.status === 405 ? '405 is expected - OAuth endpoint exists but expects proper OAuth flow' : null,
         nextSteps: [
-          'Ensure Twitter OAuth is enabled in Supabase Dashboard > Authentication > Providers',
-          'Verify Twitter API credentials are set in Supabase',
-          'Check that callback URLs match between Twitter Developer Portal and Supabase'
+          'Ensure Google OAuth is enabled in Supabase Dashboard > Authentication > Providers',
+          'Verify Google OAuth credentials are set in Supabase',
+          'Check that callback URLs match between Google Cloud Console and Supabase'
         ]
       }
     })

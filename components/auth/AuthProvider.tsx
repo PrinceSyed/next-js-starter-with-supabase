@@ -8,7 +8,9 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
+  signInWithOAuth: (provider: 'twitter' | 'google' | 'github' | 'discord') => Promise<void>
   signInWithTwitter: () => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -43,31 +45,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signInWithTwitter = async () => {
+  const signInWithOAuth = async (provider: 'twitter' | 'google' | 'github' | 'discord') => {
     try {
-      console.log('Starting Twitter OAuth...')
-      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log(`Starting ${provider} OAuth...`)
       console.log('Current origin:', window.location.origin)
-      console.log('Supabase client config:', {
-        url: supabase.supabaseUrl,
-        key: supabase.supabaseKey ? 'Set' : 'Missing'
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            // You can add additional OAuth parameters here if needed
+          }
+        }
       })
       
-      console.log('About to call signInWithOAuth...')
+      if (error) {
+        console.error(`${provider} OAuth error:`, error)
+        throw error
+      }
       
-      // Try with manual OAuth URL construction to avoid the client bug
-      const oauthUrl = `${supabase.supabaseUrl}/auth/v1/authorize?provider=twitter&redirect_to=${encodeURIComponent(`${window.location.origin}/auth/callback`)}`
-      console.log('Manual OAuth URL:', oauthUrl)
-      
-      // Redirect to the OAuth URL directly
-      window.location.href = oauthUrl
-      console.log('OAuth redirect initiated')
+      console.log(`${provider} OAuth initiated successfully:`, data)
       
     } catch (error) {
-      console.error('Twitter sign in failed:', error)
+      console.error(`${provider} sign in failed:`, error)
       throw error
     }
   }
+
+  const signInWithTwitter = () => signInWithOAuth('twitter')
+  const signInWithGoogle = () => signInWithOAuth('google')
 
   const signOut = async () => {
     try {
@@ -86,7 +93,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     loading,
+    signInWithOAuth,
     signInWithTwitter,
+    signInWithGoogle,
     signOut
   }
 

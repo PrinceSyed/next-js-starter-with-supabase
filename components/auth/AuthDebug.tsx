@@ -1,238 +1,360 @@
 'use client'
 
+import { useState } from 'react'
 import { useAuth } from './AuthProvider'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { supabase } from '@/lib/supabase'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function AuthDebug() {
-  const { user, session, loading, signInWithTwitter } = useAuth()
+  const { user, session, loading, signInWithTwitter, signInWithGoogle } = useAuth()
+  const [testResults, setTestResults] = useState<any>(null)
+  const [isTesting, setIsTesting] = useState(false)
 
-  const handleTestSignIn = async () => {
+  const testOAuthSetup = async () => {
+    setIsTesting(true)
     try {
-      console.log('Starting Twitter sign in...')
-      await signInWithTwitter()
+      const response = await fetch('/api/test-twitter-oauth')
+      const data = await response.json()
+      setTestResults(data)
     } catch (error) {
-      console.error('Sign in error:', error)
-      alert(`Sign in error: ${error}`)
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
     }
   }
 
-  const handleTestConnection = async () => {
+  const testSupabaseConnection = async () => {
+    setIsTesting(true)
     try {
-      console.log('Testing Supabase connection...')
-      const { data, error } = await supabase.auth.getSession()
-      console.log('Connection test result:', { data, error })
-      alert(error ? `Connection error: ${error.message}` : 'Connection successful!')
+      const response = await fetch('/api/test-supabase')
+      const data = await response.json()
+      setTestResults(data)
     } catch (error) {
-      console.error('Connection test failed:', error)
-      alert(`Connection test failed: ${error}`)
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
     }
   }
 
-  const handleTestOAuthEndpoint = async () => {
+  const testOAuthFlow = async () => {
+    setIsTesting(true)
     try {
-      console.log('Testing OAuth configuration...')
-      
-      // Clear any cached auth state
-      await supabase.auth.signOut()
-      
-      // Test if Twitter provider is configured by trying to get OAuth URL
-      const oauthUrl = `${supabase.supabaseUrl}/auth/v1/authorize?provider=twitter&redirect_to=${encodeURIComponent(`${window.location.origin}/auth/callback`)}`
-      console.log('Testing OAuth URL:', oauthUrl)
-      
-      // Test if the URL is accessible
-      const response = await fetch(oauthUrl, { method: 'HEAD' })
-      console.log('OAuth URL test result:', response.status, response.statusText)
-      
-      if (response.status === 405) {
-        console.log('OAuth test result: Success - provider is configured (405 is expected)')
-        alert('OAuth test: Success - Twitter provider is configured! (405 is expected)')
-      } else if (response.ok) {
-        console.log('OAuth test result: Success - provider is configured')
-        alert('OAuth test: Success - Twitter provider is configured!')
-      } else {
-        console.log('OAuth test result:', response.status, response.statusText)
-        alert(`OAuth test: ${response.status} ${response.statusText}`)
-      }
+      const response = await fetch('/api/test-oauth-flow')
+      const data = await response.json()
+      setTestResults(data)
     } catch (error) {
-      console.error('OAuth test failed:', error)
-      alert(`OAuth test failed: ${error}`)
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
     }
   }
 
-  const handleTestSupabaseUrl = async () => {
+  const testGoogleOAuth = async () => {
+    setIsTesting(true)
     try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      console.log('Testing Supabase URL:', supabaseUrl)
-      
-      // Test the base URL
-      const response = await fetch(supabaseUrl, { method: 'HEAD' })
-      console.log('Base URL test result:', response.status, response.statusText)
-      
-      // Test the auth endpoint
-      const authResponse = await fetch(`${supabaseUrl}/auth/v1/`, { method: 'HEAD' })
-      console.log('Auth endpoint test result:', authResponse.status, authResponse.statusText)
-      
-      alert(`Base URL: ${response.status}, Auth: ${authResponse.status}`)
+      const response = await fetch('/api/test-google-oauth')
+      const data = await response.json()
+      setTestResults(data)
     } catch (error) {
-      console.error('URL test failed:', error)
-      alert(`URL test failed: ${error}`)
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
     }
   }
 
-  const handleClearCache = async () => {
+  const debugOAuth = async () => {
+    setIsTesting(true)
     try {
-      // Clear localStorage
-      localStorage.clear()
-      
-      // Clear sessionStorage
-      sessionStorage.clear()
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut()
-      
-      // Reload the page to clear any cached client configurations
-      window.location.reload()
-      
-      alert('Cache cleared and page reloaded!')
+      const response = await fetch('/api/debug-oauth')
+      const data = await response.json()
+      setTestResults(data)
     } catch (error) {
-      console.error('Cache clear failed:', error)
-      alert(`Cache clear failed: ${error}`)
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testActualOAuth = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-actual-oauth')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testGooglePKCE = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-google-pkce')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testGoogleOAuthDetailed = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-google-oauth-detailed')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
+    }
+  }
+
+  const testServerClient = async () => {
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/test-server-client')
+      const data = await response.json()
+      setTestResults(data)
+    } catch (error) {
+      setTestResults({ success: false, error: error instanceof Error ? error.message : 'Unknown error' })
+    } finally {
+      setIsTesting(false)
     }
   }
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl">
       <CardHeader>
-        <CardTitle className="font-display font-bold text-2xl">
-          Auth Debug
-        </CardTitle>
+        <CardTitle>Authentication Debug Panel</CardTitle>
         <CardDescription>
-          Debug information for Twitter authentication
+          Debug your Supabase and Twitter OAuth setup
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Environment Variables */}
-        <div className="space-y-2">
-          <h3 className="font-semibold">Environment Variables:</h3>
-          <div className="space-y-1 text-sm">
-            <p>
-              <span className="font-mono">NEXT_PUBLIC_SUPABASE_URL:</span>{' '}
-              <Badge variant="outline">
-                {process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing'}
-              </Badge>
-              {process.env.NEXT_PUBLIC_SUPABASE_URL && (
-                <span className="text-xs text-muted-foreground ml-2">
-                  {process.env.NEXT_PUBLIC_SUPABASE_URL}
-                </span>
-              )}
-            </p>
-            <p>
-              <span className="font-mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:</span>{' '}
-              <Badge variant="outline">
-                {process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? '✅ Set' : '❌ Missing'}
-              </Badge>
-              {process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && (
-                <span className="text-xs text-muted-foreground ml-2">
-                  {process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.substring(0, 20)}...
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
+      <CardContent>
+        <Tabs defaultValue="status" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="status">Status</TabsTrigger>
+            <TabsTrigger value="environment">Environment</TabsTrigger>
+            <TabsTrigger value="tests">Tests</TabsTrigger>
+            <TabsTrigger value="session">Session</TabsTrigger>
+          </TabsList>
 
-        {/* Auth State */}
-        <div className="space-y-2">
-          <h3 className="font-semibold">Auth State:</h3>
-          <div className="space-y-1 text-sm">
-            <p>
-              <span className="font-mono">Loading:</span>{' '}
-              <Badge variant={loading ? 'secondary' : 'outline'}>
-                {loading ? 'Yes' : 'No'}
-              </Badge>
-            </p>
-            <p>
-              <span className="font-mono">User:</span>{' '}
-              <Badge variant={user ? 'secondary' : 'outline'}>
-                {user ? 'Logged In' : 'Not Logged In'}
-              </Badge>
-            </p>
-            <p>
-              <span className="font-mono">Session:</span>{' '}
-              <Badge variant={session ? 'secondary' : 'outline'}>
-                {session ? 'Active' : 'None'}
-              </Badge>
-            </p>
-          </div>
-        </div>
+          <TabsContent value="status" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <h3 className="font-semibold">Auth Status</h3>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span>Loading:</span>
+                    <Badge variant={loading ? "destructive" : "secondary"}>
+                      {loading ? "Yes" : "No"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Authenticated:</span>
+                    <Badge variant={user ? "default" : "secondary"}>
+                      {user ? "Yes" : "No"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Session:</span>
+                    <Badge variant={session ? "default" : "secondary"}>
+                      {session ? "Active" : "None"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
 
-        {/* User Details */}
-        {user && (
-          <div className="space-y-2">
-            <h3 className="font-semibold">User Details:</h3>
-            <div className="space-y-1 text-sm">
-              <p><span className="font-mono">ID:</span> {user.id}</p>
-              <p><span className="font-mono">Email:</span> {user.email}</p>
-              <p><span className="font-mono">Provider:</span> {user.app_metadata?.provider}</p>
-              <p><span className="font-mono">Username:</span> {user.user_metadata?.user_name}</p>
-              <p><span className="font-mono">Full Name:</span> {user.user_metadata?.full_name}</p>
+              {user && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">User Info</h3>
+                  <div className="space-y-1 text-sm">
+                    <div><strong>Email:</strong> {user.email || 'N/A'}</div>
+                    <div><strong>ID:</strong> {user.id}</div>
+                    <div><strong>Provider:</strong> {user.app_metadata?.provider || 'N/A'}</div>
+                    <div><strong>Created:</strong> {new Date(user.created_at).toLocaleString()}</div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
 
-        {/* Test Buttons */}
-        <div className="pt-4 border-t border-border space-y-2">
-          <Button 
-            onClick={handleTestConnection} 
-            className="w-full"
-            variant="outline"
-            size="sm"
-          >
-            Test Supabase Connection
-          </Button>
-          <Button 
-            onClick={handleTestSignIn} 
-            className="w-full"
-            variant="outline"
-          >
-            Test Twitter Sign In
-          </Button>
-          <Button 
-            onClick={handleTestOAuthEndpoint} 
-            className="w-full"
-            variant="outline"
-            size="sm"
-          >
-            Test Twitter OAuth Config
-          </Button>
-          <Button 
-            onClick={handleTestSupabaseUrl} 
-            className="w-full"
-            variant="outline"
-            size="sm"
-          >
-            Test Supabase URL
-          </Button>
-          <Button 
-            onClick={handleClearCache} 
-            className="w-full"
-            variant="outline"
-            size="sm"
-          >
-            Clear Cache & Reload
-          </Button>
-        </div>
+                         <div className="pt-4 space-y-2">
+               <Button 
+                 onClick={signInWithTwitter} 
+                 disabled={loading}
+                 className="w-full"
+               >
+                 Test Twitter Sign In
+               </Button>
+               <Button 
+                 onClick={signInWithGoogle} 
+                 disabled={loading}
+                 className="w-full"
+                 variant="outline"
+               >
+                 Test Google Sign In
+               </Button>
+             </div>
+          </TabsContent>
 
-        {/* Console Instructions */}
-        <div className="text-xs text-muted-foreground">
-          <p>Open browser console (F12) to see detailed logs</p>
-          <p className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
-            <strong>Note:</strong> If you see a 405 error when testing OAuth endpoints, this is normal - 
-            it means your Supabase project is working but Twitter OAuth needs to be configured in the dashboard.
-          </p>
-        </div>
+          <TabsContent value="environment" className="space-y-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Environment Variables</h3>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono">NEXT_PUBLIC_SUPABASE_URL:</span>
+                      <Badge variant={process.env.NEXT_PUBLIC_SUPABASE_URL ? "default" : "destructive"}>
+                        {process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing'}
+                      </Badge>
+                    </div>
+                    {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+                      <div className="text-xs text-muted-foreground break-all">
+                        {process.env.NEXT_PUBLIC_SUPABASE_URL}
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:</span>
+                      <Badge variant={process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? "default" : "destructive"}>
+                        {process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? '✅ Set' : '❌ Missing'}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono">SUPABASE_SECRET_KEY:</span>
+                      <Badge variant={process.env.SUPABASE_SECRET_KEY ? "default" : "destructive"}>
+                        {process.env.SUPABASE_SECRET_KEY ? '✅ Set' : '❌ Missing'}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Client Info</h3>
+                  <div className="space-y-1 text-sm">
+                    <div><strong>Origin:</strong> {typeof window !== 'undefined' ? window.location.origin : 'N/A'}</div>
+                    <div><strong>User Agent:</strong> {typeof navigator !== 'undefined' ? navigator.userAgent.substring(0, 50) + '...' : 'N/A'}</div>
+                    <div><strong>Environment:</strong> {process.env.NODE_ENV}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="tests" className="space-y-4">
+            <div className="space-y-4">
+                             <div className="flex gap-2 flex-wrap">
+                 <Button 
+                   onClick={testActualOAuth} 
+                   disabled={isTesting}
+                   variant="default"
+                 >
+                   🎯 Test Actual OAuth Flow
+                 </Button>
+                                   <Button 
+                    onClick={testGooglePKCE} 
+                    disabled={isTesting}
+                    variant="default"
+                  >
+                    🔍 Test Google PKCE
+                  </Button>
+                                     <Button 
+                     onClick={testGoogleOAuthDetailed} 
+                     disabled={isTesting}
+                     variant="default"
+                   >
+                     🔍 Test Google OAuth Detailed
+                   </Button>
+                   <Button 
+                     onClick={testServerClient} 
+                     disabled={isTesting}
+                     variant="outline"
+                   >
+                     🔍 Test Server Client Config
+                   </Button>
+                 <Button 
+                   onClick={debugOAuth} 
+                   disabled={isTesting}
+                   variant="outline"
+                 >
+                   🔍 Debug OAuth (Comprehensive)
+                 </Button>
+                 <Button 
+                   onClick={testOAuthSetup} 
+                   disabled={isTesting}
+                   variant="outline"
+                 >
+                   Test Twitter OAuth
+                 </Button>
+                 <Button 
+                   onClick={testGoogleOAuth} 
+                   disabled={isTesting}
+                   variant="outline"
+                 >
+                   Test Google OAuth
+                 </Button>
+                 <Button 
+                   onClick={testSupabaseConnection} 
+                   disabled={isTesting}
+                   variant="outline"
+                 >
+                   Test Supabase Connection
+                 </Button>
+                 <Button 
+                   onClick={testOAuthFlow} 
+                   disabled={isTesting}
+                   variant="outline"
+                 >
+                   Test OAuth Flow
+                 </Button>
+               </div>
+
+              {testResults && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Test Results</h3>
+                  <pre className="bg-muted p-4 rounded-lg text-xs overflow-auto">
+                    {JSON.stringify(testResults, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="session" className="space-y-4">
+            <div className="space-y-4">
+              <h3 className="font-semibold">Session Details</h3>
+              {session ? (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1 text-sm">
+                      <div><strong>Access Token:</strong> {session.access_token.substring(0, 20)}...</div>
+                      <div><strong>Refresh Token:</strong> {session.refresh_token.substring(0, 20)}...</div>
+                      <div><strong>Expires At:</strong> {new Date(session.expires_at * 1000).toLocaleString()}</div>
+                      <div><strong>Token Type:</strong> {session.token_type}</div>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div><strong>User ID:</strong> {session.user.id}</div>
+                      <div><strong>Email:</strong> {session.user.email}</div>
+                      <div><strong>Email Confirmed:</strong> {session.user.email_confirmed_at ? 'Yes' : 'No'}</div>
+                      <div><strong>Last Sign In:</strong> {session.user.last_sign_in_at ? new Date(session.user.last_sign_in_at).toLocaleString() : 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No active session</p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   )

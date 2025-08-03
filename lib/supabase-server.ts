@@ -7,7 +7,8 @@ export const createServerClient = () => {
   return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
+      persistSession: false,
+      flowType: 'pkce'
     }
   })
 } 
