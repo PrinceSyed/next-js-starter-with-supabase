@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { spaceGrotesk, ppWatch } from "@/lib/fonts";
 import { Navigation } from "@/components/ui/navigation";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,10 +19,12 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${ppWatch.variable} antialiased`}
       >
-        <Navigation />
-        <main className="pt-16">
-          {children}
-        </main>
+        <AuthProvider>
+          <Navigation />
+          <main className="pt-16">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -4,6 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SupabaseTest } from "@/components/SupabaseTest";
+import { TwitterLoginButton } from "@/components/auth/TwitterLoginButton";
+import { UserProfile } from "@/components/auth/UserProfile";
+import { AuthStatus } from "@/components/auth/AuthStatus";
+import { AuthDebug } from "@/components/auth/AuthDebug";
 
 export default function Home() {
   return (
@@ -11,9 +15,12 @@ export default function Home() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-6xl font-display font-black text-foreground tracking-tight">
-            Rugbot
-          </h1>
+          <div className="flex items-center justify-center space-x-4">
+            <h1 className="text-6xl font-display font-black text-foreground tracking-tight">
+              Rugbot
+            </h1>
+            <AuthStatus />
+          </div>
           <p className="text-xl text-muted-foreground">
             A persuasive role-playing game with AI chatbot
           </p>
@@ -24,6 +31,12 @@ export default function Home() {
 
         {/* Supabase Test */}
         <SupabaseTest />
+
+        {/* Auth Debug - Temporary for troubleshooting */}
+        <AuthDebug />
+
+        {/* User Profile - Shows when authenticated */}
+        <UserProfile />
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -37,9 +50,7 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">
-                Connect Twitter
-              </Button>
+              <TwitterLoginButton />
             </CardContent>
           </Card>
 
