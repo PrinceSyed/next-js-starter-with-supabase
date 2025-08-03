@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SupabaseTest } from "@/components/SupabaseTest";
 
 export default function Home() {
   return (
@@ -20,6 +21,9 @@ export default function Home() {
             Powered by OpenRouter & Solana
           </Badge>
         </div>
+
+        {/* Supabase Test */}
+        <SupabaseTest />
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
