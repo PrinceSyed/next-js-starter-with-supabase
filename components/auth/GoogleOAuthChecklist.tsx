@@ -54,7 +54,7 @@ export function GoogleOAuthChecklist() {
     {
       id: 'test-flow',
       title: 'Test OAuth Flow',
-      description: 'Run the debug tests to verify the complete OAuth flow',
+      description: 'Test the OAuth flow by signing in with Google',
       completed: false
     }
   ])
