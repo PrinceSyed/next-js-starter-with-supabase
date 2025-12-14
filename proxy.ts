@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const res = NextResponse.next()
 
   // Only handle auth-related routes
@@ -17,7 +16,7 @@ export async function middleware(req: NextRequest) {
     const error = req.nextUrl.searchParams.get('error')
 
     // Log the callback for debugging
-    console.log('Middleware - Auth callback:', {
+    console.log('Proxy - Auth callback:', {
       pathname: req.nextUrl.pathname,
       hasCode: !!code,
       hasError: !!error,
@@ -44,4 +43,4 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
-} 
+}

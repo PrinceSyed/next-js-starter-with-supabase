@@ -7,6 +7,13 @@ export async function GET() {
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     const serviceKey = process.env.SUPABASE_SECRET_KEY
 
+    if (!supabaseUrl) {
+      return NextResponse.json({
+        success: false,
+        error: 'NEXT_PUBLIC_SUPABASE_URL not configured'
+      }, { status: 500 })
+    }
+
     // Test basic connectivity
     const baseResponse = await fetch(supabaseUrl, { method: 'HEAD' })
     

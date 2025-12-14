@@ -546,7 +546,7 @@ export function AuthDebug() {
                     <div className="space-y-1 text-sm">
                       <div><strong>Access Token:</strong> {session.access_token.substring(0, 20)}...</div>
                       <div><strong>Refresh Token:</strong> {session.refresh_token.substring(0, 20)}...</div>
-                      <div><strong>Expires At:</strong> {new Date(session.expires_at * 1000).toLocaleString()}</div>
+                      <div><strong>Expires At:</strong> {session.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : 'N/A'}</div>
                       <div><strong>Token Type:</strong> {session.token_type}</div>
                     </div>
                     <div className="space-y-1 text-sm">

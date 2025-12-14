@@ -20,15 +20,8 @@ export async function GET() {
     })
     
     // Test with Supabase client to check provider configuration
-    const supabase = createServerClient()
-    let providerConfig = null
-    try {
-      // Try to get provider configuration (this might not be available via API)
-      const { data: providers, error: providerError } = await supabase.auth.listIdentities()
-      providerConfig = { providers, error: providerError?.message }
-    } catch (e) {
-      providerConfig = { error: 'Could not fetch provider config' }
-    }
+    // Note: listIdentities is not available on the client auth API
+    const providerConfig = { note: 'Provider configuration check requires admin API access' }
     
     return NextResponse.json({
       success: true,

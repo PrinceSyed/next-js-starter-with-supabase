@@ -16,16 +16,18 @@ export async function GET() {
     }
 
     try {
-      const url = new URL(supabaseUrl)
-      urlValidation.isValidUrl = true
-      urlValidation.hasHttps = url.protocol === 'https:'
-      urlValidation.hasCorrectDomain = url.hostname.includes('supabase.co')
+      if (supabaseUrl) {
+        const url = new URL(supabaseUrl)
+        urlValidation.isValidUrl = true
+        urlValidation.hasHttps = url.protocol === 'https:'
+        urlValidation.hasCorrectDomain = url.hostname.includes('supabase.co')
+      }
     } catch (e) {
       urlValidation.isValidUrl = false
     }
 
     // Test 2: Test different OAuth endpoints
-    const oauthTests = {}
+    const oauthTests: Record<string, any> = {}
     
     const providers = ['twitter', 'google', 'github']
     const testUrls = [
@@ -39,12 +41,14 @@ export async function GET() {
 
     for (const testUrl of testUrls) {
       try {
+        const headers: Record<string, string> = {}
+        if (anonKey) {
+          headers['apikey'] = anonKey
+          headers['Authorization'] = `Bearer ${anonKey}`
+        }
         const response = await fetch(testUrl, { 
           method: 'HEAD',
-          headers: {
-            'apikey': anonKey,
-            'Authorization': `Bearer ${anonKey}`
-          }
+          headers
         })
         oauthTests[testUrl] = {
           status: response.status,
@@ -60,20 +64,30 @@ export async function GET() {
     }
 
     // Test 3: Test OAuth URL construction
-    const oauthUrlTests = {}
+    const oauthUrlTests: Record<string, any> = {}
     const redirectTo = 'http://localhost:3000/auth/callback'
     
     for (const provider of providers) {
+      if (!supabaseUrl) {
+        oauthUrlTests[provider] = {
+          url: null,
+          error: 'Supabase URL not configured'
+        }
+        continue
+      }
       const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectTo)}`
       
       try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json'
+        }
+        if (anonKey) {
+          headers['apikey'] = anonKey
+          headers['Authorization'] = `Bearer ${anonKey}`
+        }
         const response = await fetch(oauthUrl, { 
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': anonKey,
-            'Authorization': `Bearer ${anonKey}`
-          },
+          headers,
           body: JSON.stringify({})
         })
         
@@ -92,7 +106,7 @@ export async function GET() {
     }
 
     // Test 4: Test Supabase client
-    let clientTest = { success: false, error: null, session: null }
+    let clientTest: { success: boolean; error: string | null; session: string | null } = { success: false, error: null, session: null }
     try {
       const supabase = createServerClient()
       const { data, error } = await supabase.auth.getSession()

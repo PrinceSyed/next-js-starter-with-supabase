@@ -5,6 +5,9 @@ import localFont from "next/font/local";
 export const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "arial"],
 });
 
 // Local Display Fonts - PP Watch

@@ -7,15 +7,23 @@ export async function GET() {
     const redirectTo = 'http://localhost:3000/auth/callback'
 
     // Test Google OAuth with PKCE flow
+    if (!supabaseUrl) {
+      return NextResponse.json({
+        success: false,
+        error: 'NEXT_PUBLIC_SUPABASE_URL not configured'
+      }, { status: 500 })
+    }
     const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`
 
     // Test with GET request (the actual OAuth flow)
+    const headers: Record<string, string> = {}
+    if (anonKey) {
+      headers['apikey'] = anonKey
+      headers['Authorization'] = `Bearer ${anonKey}`
+    }
     const response = await fetch(oauthUrl, { 
       method: 'GET',
-      headers: {
-        'apikey': anonKey,
-        'Authorization': `Bearer ${anonKey}`
-      }
+      headers
     })
 
     // Get the response body

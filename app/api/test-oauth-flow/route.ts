@@ -12,7 +12,7 @@ export async function GET() {
       supabaseUrl: !!supabaseUrl,
       anonKey: !!anonKey,
       serviceKey: !!serviceKey,
-      missingKeys: []
+      missingKeys: [] as string[]
     }
 
     if (!supabaseUrl) envCheck.missingKeys.push('NEXT_PUBLIC_SUPABASE_URL')
@@ -20,47 +20,50 @@ export async function GET() {
     if (!serviceKey) envCheck.missingKeys.push('SUPABASE_SECRET_KEY')
 
     // Test 2: Check Supabase connectivity
-    const connectivityCheck = {
+    const connectivityCheck: any = {
       baseUrl: null,
       authEndpoint: null,
       restEndpoint: null
     }
 
-    try {
-      const baseResponse = await fetch(supabaseUrl, { method: 'HEAD' })
-      connectivityCheck.baseUrl = {
-        status: baseResponse.status,
-        ok: baseResponse.ok
+    if (supabaseUrl) {
+      try {
+        const baseResponse = await fetch(supabaseUrl, { method: 'HEAD' })
+        connectivityCheck.baseUrl = {
+          status: baseResponse.status,
+          ok: baseResponse.ok
+        }
+      } catch (e) {
+        connectivityCheck.baseUrl = { error: e instanceof Error ? e.message : 'Unknown error' }
       }
-    } catch (e) {
-      connectivityCheck.baseUrl = { error: e instanceof Error ? e.message : 'Unknown error' }
-    }
 
-    try {
-      const authResponse = await fetch(`${supabaseUrl}/auth/v1/`, { method: 'HEAD' })
-      connectivityCheck.authEndpoint = {
-        status: authResponse.status,
-        ok: authResponse.ok
+      try {
+        const authResponse = await fetch(`${supabaseUrl}/auth/v1/`, { method: 'HEAD' })
+        connectivityCheck.authEndpoint = {
+          status: authResponse.status,
+          ok: authResponse.ok
+        }
+      } catch (e) {
+        connectivityCheck.authEndpoint = { error: e instanceof Error ? e.message : 'Unknown error' }
       }
-    } catch (e) {
-      connectivityCheck.authEndpoint = { error: e instanceof Error ? e.message : 'Unknown error' }
-    }
 
-    try {
-      const restResponse = await fetch(`${supabaseUrl}/rest/v1/`, { method: 'HEAD' })
-      connectivityCheck.restEndpoint = {
-        status: restResponse.status,
-        ok: restResponse.ok
+      try {
+        const restResponse = await fetch(`${supabaseUrl}/rest/v1/`, { method: 'HEAD' })
+        connectivityCheck.restEndpoint = {
+          status: restResponse.status,
+          ok: restResponse.ok
+        }
+      } catch (e) {
+        connectivityCheck.restEndpoint = { error: e instanceof Error ? e.message : 'Unknown error' }
       }
-    } catch (e) {
-      connectivityCheck.restEndpoint = { error: e instanceof Error ? e.message : 'Unknown error' }
+
     }
 
     // Test 3: Check client-side OAuth URL generation
-    const clientOAuthUrl = `${supabaseUrl}/auth/v1/authorize?provider=twitter&redirect_to=${encodeURIComponent('http://localhost:3000/auth/callback')}`
+    const clientOAuthUrl = supabaseUrl ? `${supabaseUrl}/auth/v1/authorize?provider=twitter&redirect_to=${encodeURIComponent('http://localhost:3000/auth/callback')}` : null
 
     // Test 4: Check if we can create a server client
-    let serverClientCheck = { success: false, error: null }
+    let serverClientCheck: { success: boolean; error: string | null; hasSession?: boolean } = { success: false, error: null }
     try {
       const supabase = createServerClient()
       const { data, error } = await supabase.auth.getSession()

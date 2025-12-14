@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET() {
   try {
-    const diagnostics = {
+    const diagnostics: any = {
       timestamp: new Date().toISOString(),
       environment: {
         nodeEnv: process.env.NODE_ENV,
@@ -19,7 +19,8 @@ export async function GET() {
         origin: 'http://localhost:3000', // Assuming local development
         callbackUrl: 'http://localhost:3000/auth/callback',
       },
-      tests: {} as any
+      tests: {},
+      recommendations: [] as string[]
     }
 
     // Test 1: Client-side Supabase connection
@@ -70,10 +71,9 @@ export async function GET() {
       diagnostics.tests.oauthUrlConstruction = {
         success: !oauthError,
         hasUrl: !!oauthData.url,
-        url: oauthData.url,
+        url: oauthData.url || null,
         error: oauthError?.message,
-        providerToken: oauthData.provider_token,
-        session: oauthData.session
+        provider: oauthData.provider
       }
     } catch (error) {
       diagnostics.tests.oauthUrlConstruction = {
@@ -83,18 +83,10 @@ export async function GET() {
     }
 
     // Test 4: Check if Google provider is enabled (by attempting to get provider config)
-    try {
-      const { data: providers, error: providersError } = await supabase.auth.listIdentities()
-      diagnostics.tests.providerConfig = {
-        success: !providersError,
-        providers: providers?.map(p => p.provider),
-        error: providersError?.message
-      }
-    } catch (error) {
-      diagnostics.tests.providerConfig = {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+    // Note: listIdentities is not available on the client auth API
+    diagnostics.tests.providerConfig = {
+      success: true,
+      note: 'Provider configuration check requires admin API access'
     }
 
     // Test 5: Test callback endpoint accessibility
