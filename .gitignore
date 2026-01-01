@@ -43,3 +43,6 @@ next-env.d.ts
 # security audits
 audits.md
 *.md.audit
+
+# claude
+.claude/

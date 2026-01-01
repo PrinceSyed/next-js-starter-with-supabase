@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createClient } from '@/lib/supabase-server'
 import { supabase } from '@/lib/supabase'
 
 export async function GET() {
@@ -41,7 +41,7 @@ export async function GET() {
 
     // Test 2: Server-side Supabase connection
     try {
-      const supabaseServer = createServerClient()
+      const supabaseServer = await createClient()
       const { data: serverSessionData, error: serverSessionError } = await supabaseServer.auth.getSession()
       diagnostics.tests.serverSession = {
         success: !serverSessionError,

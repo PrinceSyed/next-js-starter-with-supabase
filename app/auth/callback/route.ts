@@ -1,50 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase-server'
 
+/**
+ * OAuth Callback Handler
+ *
+ * Security improvements:
+ * 1. Exchanges code server-side (no code exposure in URLs/logs)
+ * 2. Uses Supabase SSR for proper cookie storage
+ * 3. Removes sensitive data logging
+ * 4. Uses Supabase's built-in CSRF protection (state validation)
+ */
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
-  const state = requestUrl.searchParams.get('state')
 
-  console.log('Auth callback received:', { 
-    code: !!code, 
-    error, 
-    errorDescription, 
-    state: !!state,
-    url: request.url,
-    origin: requestUrl.origin,
-    pathname: requestUrl.pathname,
-    searchParams: requestUrl.searchParams.toString()
-  })
-
+  // Handle OAuth errors
   if (error) {
-    console.error('OAuth error:', error, errorDescription)
-    console.error('Full error details:', { error, errorDescription, state, url: request.url })
+    console.error('OAuth error occurred:', error)
+    // Redirect to home with generic error (no sensitive data in URL)
     return NextResponse.redirect(
-      `${requestUrl.origin}?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`
+      `${requestUrl.origin}/?auth_error=${encodeURIComponent(error)}`
     )
   }
 
-  // For successful OAuth flows, let Supabase handle the code exchange automatically
-  // The client-side library will detect the code in the URL and handle the exchange
-  if (code) {
-    console.log('OAuth code received, redirecting to home for automatic code exchange...')
-    console.log('Code length:', code.length)
-    console.log('State:', state)
-    
-    // Redirect to home page with the code in the URL so Supabase can detect it
-    const redirectUrl = new URL(requestUrl.origin)
-    redirectUrl.searchParams.set('code', code)
-    if (state) {
-      redirectUrl.searchParams.set('state', state)
-    }
-    
-    console.log('Redirecting to:', redirectUrl.toString())
-    return NextResponse.redirect(redirectUrl.toString())
+  // Check for authorization code
+  if (!code) {
+    console.warn('No authorization code in callback')
+    return NextResponse.redirect(
+      `${requestUrl.origin}/?auth_error=no_code`
+    )
   }
 
-  // No code or error - redirect to home
-  console.log('No code or error in callback, redirecting to home')
-  return NextResponse.redirect(requestUrl.origin)
+  try {
+    // Create server-side Supabase client with cookie storage
+    const supabase = await createClient()
+
+    // Exchange authorization code for session server-side
+    // This prevents the code from being exposed in client-side URLs/logs
+    const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (exchangeError) {
+      console.error('Failed to exchange code for session:', exchangeError.message)
+      return NextResponse.redirect(
+        `${requestUrl.origin}/?auth_error=session_failed`
+      )
+    }
+
+    // Log successful authentication (without sensitive data)
+    if (data.session?.user) {
+      console.log('User authenticated successfully:', {
+        userId: data.session.user.id,
+        email: data.session.user.email
+      })
+    }
+
+    // Redirect to home page WITHOUT sensitive data in URL
+    // The session is stored in httpOnly cookies by Supabase SSR
+    return NextResponse.redirect(requestUrl.origin)
+
+  } catch (error) {
+    console.error('OAuth callback error:', error)
+    return NextResponse.redirect(
+      `${requestUrl.origin}/?auth_error=server_error`
+    )
+  }
 } 

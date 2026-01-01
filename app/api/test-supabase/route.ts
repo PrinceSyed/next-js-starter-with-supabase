@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createClient } from '@/lib/supabase-server'
 
 export async function GET() {
   try {
@@ -21,7 +21,7 @@ export async function GET() {
     const authResponse = await fetch(`${supabaseUrl}/auth/v1/`, { method: 'HEAD' })
     
     // Test with Supabase client
-    const supabase = createServerClient()
+    const supabase = await createClient()
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
     
     // Test health endpoint
